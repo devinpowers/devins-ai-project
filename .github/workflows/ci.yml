@@ -12,17 +12,33 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
-      - name: Install dependencies
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr
+
+      - name: Install Python dependencies
         run: |
           pip install black flake8 isort pytest
+          pip install .
+
+      - name: Debug environment
+        run: |
+          pip list
+          tesseract --version
+          python -c "import pytesseract"
+
       - name: Run linters
         run: |
           black --check .
           flake8 .
           isort --check-only .
+
       - name: Run tests
         run: pytest
