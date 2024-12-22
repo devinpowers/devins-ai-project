@@ -15,6 +15,8 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         # Add any package dependencies here, e.g., "numpy>=1.20.0"
+        "pytesseract",
+        "pillow",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
