@@ -1,0 +1,63 @@
+Image: /Users/devinpowers/IdeaProjects/devins-new-ai/images/John_Doe_Resume.jpg
+Extracted Text:
+John Doe
+
+Email: john.doe@example.com | Phone: (555) 555-5555
+LinkedIn: linkedin.com/in/johndoe | GitHub: github.com/johndoe
+Address: 1234 Main Street, Anytown, USA
+
+Objective
+Motivated professional seeking opportunities to leverage my expertise in [industry/
+
+Professional Experience
+
+Software Engineer
+
+XYZ Tech Solutions, Anytown, USA
+
+Jan 2020 - Present
+
+- Designed and developed scalable software solutions, achieving a 30% increase in |
+- Collaborated with cross-functional teams to implement cutting-edge technologies,
+- Spearheaded the development of a real-time data analytics platform, resulting in i
+
+Junior Developer
+
+Innovate Systems, Anytown, USA
+
+Aug 2017 - Dec 2019
+
+- Contributed to the development of a customer relationship management (CRM) to:
+- Enhanced system performance by optimizing database queries, reducing runtime |
+- Provided technical support and training to end-users, improving client onboarding
+
+Education
+
+Bachelor of Science in Computer Science
+University of Technology, Anytown, USA
+Graduated: May 2017
+
+Skills
+
+- Programming Languages: Python, JavaScript, Java, SQL
+
+- Frameworks/Technologies: React, Node.js, Django, Spark
+
+- Tools: Git, Docker, Jenkins, JIRA
+
+- Other: Agile methodology, Data analysis, Cloud computing (AWS, Azure)
+
+Certifications
+
+- AWS Certified Solutions Architect - Associate
+- Certified ScrumMaster (CSM)
+
+- Google Data Analytics Certificate
+
+Projects
+E-commerce Web Application:
+
+- Built a dynamic e-commerce platform using React and Django, enabling real-time |
+
+Data Visualization Dashboard:
+--------------------------------------------------------------------------------
