@@ -22,3 +22,17 @@ async def extract_text_from_image(file: UploadFile = File(...)):
         return {"filename": file.filename, "text": text.strip()}
     except Exception as e:
         return {"error": f"Error processing the image: {e}"}
+
+
+@app.get("/")
+def root():
+    return {
+        "message": "Welcome to the Image Text Extractor API! Use /extract-text/ to upload an image."
+    }
+
+
+@app.get("/extract-text/")
+def extract_text_info():
+    return {
+        "message": "This endpoint accepts POST requests with an image file to extract text."
+    }

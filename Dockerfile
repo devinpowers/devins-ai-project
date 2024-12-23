@@ -1,22 +1,22 @@
-# Base image
+# Use Python 3.9 slim base image
 FROM python:3.9-slim
 
-# Install dependencies
+# Install Tesseract OCR and related dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy requirements.txt and install Python dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy app files
+# Copy application files to the container
 COPY . /app
 WORKDIR /app
 
-# Expose port
+# Expose the port for the application
 EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to start the FastAPI application using uvicorn
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
