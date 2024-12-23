@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-analyzer
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: image-analyzer
+  template:
+    metadata:
+      labels:
+        app: image-analyzer
+    spec:
+      containers:
+        - name: image-analyzer
+          image: devinpowers/image-analyzer:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

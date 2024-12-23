@@ -1,2 +1,6 @@
 pillow
 pytesseract
+fastapi
+pytest
+httpx
+fastapi[testclient]
