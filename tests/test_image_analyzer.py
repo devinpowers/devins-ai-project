@@ -1,48 +1,87 @@
-import os
+import io
 
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from src.main import app
 
 client = TestClient(app)
 
-# Get the directory of the current test file
-TESTS_DIR = os.path.dirname(__file__)
+
+# Utility to create an in-memory image for testing
+def create_test_image(format="JPEG"):
+    image = Image.new("RGB", (100, 100), color=(255, 255, 255))
+    buffer = io.BytesIO()
+    image.save(buffer, format=format)
+    buffer.seek(0)
+    return buffer
 
 
-def test_extract_text_from_image_valid():
-    """
-    Test the `/extract-text/` endpoint with a valid image.
-    """
-    # Construct the full path to the sample image
-    image_path = os.path.join(TESTS_DIR, "sample_image.png")
-    with open(image_path, "rb") as image_file:
-        response = client.post(
-            "/extract-text/",
-            files={"file": ("sample_image.png", image_file, "image/png")},
-        )
-
+def test_root_endpoint():
+    response = client.get("/")
     assert response.status_code == 200
-    response_data = response.json()
-    assert "filename" in response_data
-    assert response_data["filename"] == "sample_image.png"
-    assert "text" in response_data
-    assert len(response_data["text"]) > 0  # Ensure some text was extracted
+    assert "Welcome to the Image Text Extractor API" in response.json()["message"]
 
 
-def test_extract_text_from_image_invalid():
-    """
-    Test the `/extract-text/` endpoint with an invalid file type.
-    """
-    # Construct the full path to the sample text file
-    text_path = os.path.join(TESTS_DIR, "sample_text.txt")
-    with open(text_path, "rb") as text_file:
-        response = client.post(
-            "/extract-text/",
-            files={"file": ("sample_text.txt", text_file, "text/plain")},
-        )
-
+def test_extract_text_info_endpoint():
+    response = client.get("/extract-text/")
     assert response.status_code == 200
-    response_data = response.json()
-    assert "error" in response_data
-    assert "Error processing the image" in response_data["error"]
+    assert "This endpoint accepts POST requests" in response.json()["message"]
+
+
+def test_status_endpoint():
+    response = client.get("/status/")
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "API is operational",
+        "message": "Everything is running smoothly!",
+    }
+
+
+def test_supported_formats_endpoint():
+    response = client.get("/supported-formats/")
+    assert response.status_code == 200
+    assert "Supported image formats" in response.json()["message"]
+    assert "JPEG" in response.json()["formats"]
+
+
+def test_extract_text_from_image():
+    test_image = create_test_image()
+    files = {"file": ("test.jpg", test_image, "image/jpeg")}
+
+    response = client.post("/extract-text/", files=files)
+    assert response.status_code == 200
+    assert response.json()["filename"] == "test.jpg"
+    assert "text" in response.json()  # Text content from the image
+
+
+def test_extract_text_from_image_invalid_file():
+    files = {"file": ("test.txt", io.BytesIO(b"invalid data"), "text/plain")}
+
+    response = client.post("/extract-text/", files=files)
+    assert response.status_code == 200
+    assert "error" in response.json()
+    assert "Error processing the image" in response.json()["error"]
+
+
+def test_extract_metadata_endpoint():
+    test_image = create_test_image("JPEG")
+    files = {"file": ("test.jpg", test_image, "image/jpeg")}
+
+    response = client.post("/extract-metadata/", files=files)
+    assert response.status_code == 200
+    metadata = response.json()
+
+    assert metadata["filename"] == "test.jpg"
+    assert metadata["format"] == "JPEG"
+    assert metadata["size"] == [100, 100]  # Expected dimensions
+    assert metadata["mode"] == "RGB"
+
+
+def test_extract_metadata_invalid_file():
+    files = {"file": ("test.txt", io.BytesIO(b"invalid data"), "text/plain")}
+
+    response = client.post("/extract-metadata/", files=files)
+    assert response.status_code == 200
+    assert "error" in response.json()
+    assert "Error extracting metadata" in response.json()["error"]

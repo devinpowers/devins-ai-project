@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: image-analyzer
+  labels:
+    app: image-analyzer
 spec:
-  replicas: 3
+  replicas: 2  # Start with 2 pods
   selector:
     matchLabels:
       app: image-analyzer
@@ -14,10 +16,14 @@ spec:
     spec:
       containers:
         - name: image-analyzer
-          image: devinpowers/image-analyzer:latest
+          image: your-dockerhub-username/image-analyzer:latest
           ports:
             - containerPort: 8000
           resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
             limits:
               memory: "512Mi"
               cpu: "500m"
+
