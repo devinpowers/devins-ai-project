@@ -7,6 +7,7 @@ spec:
     app: image-analyzer
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8000
+      port: 80       # External port
+      targetPort: 8000  # Internal pod port
   type: LoadBalancer
+

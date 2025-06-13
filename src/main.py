@@ -1,4 +1,6 @@
 import io
+import os
+from pathlib import Path
 
 import pytesseract
 from fastapi import FastAPI, File, UploadFile
@@ -6,14 +8,15 @@ from PIL import ExifTags, Image
 
 app = FastAPI()
 
+# Directory to save uploaded images
+SAVE_FOLDER = "./incoming_images"
+Path(SAVE_FOLDER).mkdir(parents=True, exist_ok=True)
+
 
 @app.post("/extract-text/")
 async def extract_text_from_image(file: UploadFile = File(...)):
     """
     Extract text from an uploaded image file using Tesseract OCR.
-
-    :param file: Uploaded image file.
-    :return: Extracted text or an error message.
     """
     try:
         contents = await file.read()
@@ -24,13 +27,31 @@ async def extract_text_from_image(file: UploadFile = File(...)):
         return {"error": f"Error processing the image: {e}"}
 
 
+@app.post("/save-image/")
+async def save_image(file: UploadFile = File(...)):
+    """
+    Save an uploaded image to the server's local file system.
+    """
+    try:
+        # Path where the file will be saved
+        file_location = os.path.join(SAVE_FOLDER, file.filename)
+
+        # Save the file to the specified location
+        with open(file_location, "wb") as f:
+            f.write(await file.read())
+
+        return {"message": f"File saved successfully to {file_location}"}
+    except Exception as e:
+        return {"error": f"Error saving the file: {e}"}
+
+
 @app.get("/")
 def root():
     """
     Root endpoint providing basic usage instructions.
     """
     return {
-        "message": "Welcome to the Image Text Extractor API! Use /extract-text/ to upload an image."
+        "message": "Welcome to the Image Text Extractor API! Use /extract-text/ or /save-image/ to upload an image."
     }
 
 
@@ -71,9 +92,6 @@ def supported_formats():
 async def extract_metadata(file: UploadFile = File(...)):
     """
     Extract metadata from an uploaded image file.
-
-    :param file: Uploaded image file.
-    :return: Image metadata (e.g., dimensions, format).
     """
     try:
         contents = await file.read()

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: image-analyzer
 spec:
-  replicas: 2  # Start with 2 pods
+  replicas: 50  # Number of pods
   selector:
     matchLabels:
       app: image-analyzer
@@ -16,14 +16,22 @@ spec:
     spec:
       containers:
         - name: image-analyzer
-          image: your-dockerhub-username/image-analyzer:latest
+          image: image-analyzer:latest  # Replace with your built image
           ports:
             - containerPort: 8000
-          resources:
+          volumeMounts:
+            - mountPath: /src/incoming_images  # Mount inside the container
+              name: incoming-images-volume
+          resources:  # Resource limits (adjust for your system)
             requests:
-              memory: "256Mi"
+              memory: "64Mi"
               cpu: "250m"
             limits:
-              memory: "512Mi"
+              memory: "128Mi"
               cpu: "500m"
+      volumes:
+        - name: incoming-images-volume
+          hostPath:  # Local storage on your Minikube node
+            path: /tmp/image-analyzer/images
+            type: DirectoryOrCreate
 
